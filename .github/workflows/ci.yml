@@ -1,0 +1,39 @@
+name: Docker Compose CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docker-compose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Docker
+        run: docker --version
+
+      - name: Build Docker Compose Services
+        run: docker compose build
+
+      - name: Start Containers
+        run: docker compose up -d
+
+      - name: Show Running Containers
+        run: docker ps
+
+      - name: Test Flask Application
+        run: |
+          sleep 10
+          curl http://localhost:5000
+
+      - name: Stop Containers
+        if: always()
+        run: docker compose down
