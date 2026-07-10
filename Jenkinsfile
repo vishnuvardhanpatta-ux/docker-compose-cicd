@@ -37,19 +37,41 @@ pipeline {
             }
         }
 
-        stage('Health Check') {
+        stage('Wait for Application') {
             steps {
-                bat 'curl http://localhost:5000'
+                bat 'timeout /t 10 /nobreak'
             }
         }
+
+        stage('Health Check') {
+            steps {
+                bat 'curl --fail http://localhost:5000/health'
+            }
+        }
+
     }
 
     post {
+
         success {
+            echo '====================================='
             echo 'Deployment Successful!'
+            echo 'Application is running successfully.'
+            echo '====================================='
         }
+
         failure {
+            echo '====================================='
             echo 'Deployment Failed!'
+            echo 'Displaying container logs...'
+            echo '====================================='
+
+            bat 'docker ps -a'
+            bat 'docker logs flask_app'
+        }
+
+        always {
+            echo 'Pipeline Execution Completed.'
         }
     }
 }
