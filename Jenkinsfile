@@ -54,17 +54,13 @@ pipeline {
     post {
 
         success {
-            echo '====================================='
             echo 'Deployment Successful!'
             echo 'Application is running successfully.'
-            echo '====================================='
         }
 
         failure {
-            echo '====================================='
             echo 'Deployment Failed!'
             echo 'Displaying container logs...'
-            echo '====================================='
 
             bat 'docker ps -a'
             bat 'docker logs flask_app'
